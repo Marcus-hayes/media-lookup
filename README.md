@@ -1,1 +1,1 @@
-# movie-lookup
+# media-lookup
