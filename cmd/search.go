@@ -1,17 +1,22 @@
 package cmd
 
 import (
-	"fmt"
-	"log"
-
 	"github.com/Marcus-hayes/media-lookup/handler"
 	"github.com/spf13/cobra"
+)
+
+var (
+	flagErr    = "error retrieving flag input for %s flag: %s"
+	handlerErr = "error while calling handler function: %s"
 )
 
 func init() {
 	rootCmd.AddCommand(searchCmd)
 	searchCmd.Flags().String("query", "", "")
 	searchCmd.MarkFlagRequired("query")
+	searchCmd.Flags().Bool("nsfw", false, "")
+	searchCmd.Flags().String("language", "en-US", "")
+	searchCmd.Flags().Int32("page", 1, "")
 }
 
 var searchCmd = &cobra.Command{
@@ -21,18 +26,24 @@ var searchCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		query, err := cmd.Flags().GetString("query")
 		if err != nil {
-			log.Println("Error retrieving query: ", err)
+			return err
 		}
-		nsfw, err := cmd.Flags().GetString("nsfw")
+		nsfw, err := cmd.Flags().GetBool("nsfw")
 		if err != nil {
-			log.Println("Error retrieving nsfw flag: ", err)
+			return err
 		}
-		query, err := cmd.Flags().GetString("language")
+		lang, err := cmd.Flags().GetString("language")
 		if err != nil {
-			log.Println("Error retrieving query: ", err)
+			return err
 		}
-		result, err := handler.PerformSearch(query)
-		fmt.Println(result)
+		page, err := cmd.Flags().GetInt32("page")
+		if err != nil {
+			return err
+		}
+		err = handler.PerformSearch(query, nsfw, lang, page)
+		if err != nil {
+			return err
+		}
 		return nil
 	},
 }
