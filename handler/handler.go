@@ -2,6 +2,7 @@ package handler
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"text/template"
 
@@ -12,7 +13,16 @@ import (
 var (
 	templateParseErr = "error parsing TMDB client response to template: %s\n"
 	templateExecErr  = "error executing template: %s\n"
+	tmdbClient       constants.TMDBClient
 )
+
+func Init() {
+	t, err := client.PrepareClient()
+	if err != nil {
+		log.Fatalln("Error initializing handler: ", err)
+	}
+	tmdbClient = t
+}
 
 /*
 	parseTMDBResults: Templatizes input results based on their media type and logs the results to console. Returns error if one occurs, nil otherwise
@@ -48,7 +58,7 @@ func parseTMDBResults(results []constants.TMDBResult) error {
 				return fmt.Errorf(templateExecErr, err)
 			}
 		default:
-			return fmt.Errorf("Result media type does not match known types: Type is %s", result.MediaType)
+			log.Printf("Result media type does not match known types: type is %s\n", result.MediaType)
 		}
 	}
 	return nil
@@ -59,10 +69,6 @@ func parseTMDBResults(results []constants.TMDBResult) error {
 	Returns error if one occurred, nil otherwise
 */
 func PerformSearch(query string, nsfw bool, language string, page int32) error {
-	tmdbClient, err := client.PrepareClient()
-	if err != nil {
-		return fmt.Errorf("error preparing TMDB client: %s/n", err)
-	}
 	urlOpts := map[string]string{
 		"include_adult": fmt.Sprintf("%t", nsfw),
 		"page":          fmt.Sprintf("%d", page),

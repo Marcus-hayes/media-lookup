@@ -27,11 +27,14 @@ const (
 	Media type: {{.MediaType}}
 	ID: {{.ID}}
 	Known For: {{.Known For}}
-	Original Language: {{.OriginalLanguage}}
 	Genre IDs: {{if .GenreIDs}}{{.GenreIDs}}{{else}}None{{end}}
 	Description: {{if .Overview}}{{.Overview}}{{else}}None{{end}}
 	`
 )
+
+type TMDBClient interface {
+	MultimediaSearch(query string, urlOpts map[string]string) ([]TMDBResult, error)
+}
 
 type TMDBResult struct {
 	PosterPath       string   `json:"poster_path,omitempty"`

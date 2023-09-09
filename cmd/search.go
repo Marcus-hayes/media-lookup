@@ -5,11 +5,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	flagErr    = "error retrieving flag input for %s flag: %s"
-	handlerErr = "error while calling handler function: %s"
-)
-
 func init() {
 	rootCmd.AddCommand(searchCmd)
 	searchCmd.Flags().String("query", "", "")
@@ -40,6 +35,7 @@ var searchCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		handler.Init()
 		err = handler.PerformSearch(query, nsfw, lang, page)
 		if err != nil {
 			return err
