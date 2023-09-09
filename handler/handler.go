@@ -2,13 +2,62 @@ package handler
 
 import (
 	"fmt"
-	"strings"
+	"os"
+	"text/template"
 
 	"github.com/Marcus-hayes/media-lookup/client"
-	"github.com/fatih/color"
-	"github.com/rodaine/table"
+	"github.com/Marcus-hayes/media-lookup/constants"
 )
 
+var (
+	templateParseErr = "error parsing TMDB client response to template: %s\n"
+	templateExecErr  = "error executing template: %s\n"
+)
+
+/*
+	parseTMDBResults: Templatizes input results based on their media type and logs the results to console. Returns error if one occurs, nil otherwise
+*/
+func parseTMDBResults(results []constants.TMDBResult) error {
+	for _, result := range results {
+		switch result.MediaType {
+		case "person":
+			t, err := template.New(result.MediaType).Parse(constants.TMDBPersonTemplate)
+			if err != nil {
+				return fmt.Errorf(templateParseErr, err)
+			}
+			err = t.Execute(os.Stdout, result)
+			if err != nil {
+				return fmt.Errorf(templateExecErr, err)
+			}
+		case "movie":
+			t, err := template.New(result.MediaType).Parse(constants.TMDBMovieTemplate)
+			if err != nil {
+				return fmt.Errorf(templateParseErr, err)
+			}
+			err = t.Execute(os.Stdout, result)
+			if err != nil {
+				return fmt.Errorf(templateExecErr, err)
+			}
+		case "tv":
+			t, err := template.New(result.MediaType).Parse(constants.TMDBShowTemplate)
+			if err != nil {
+				return fmt.Errorf(templateParseErr, err)
+			}
+			err = t.Execute(os.Stdout, result)
+			if err != nil {
+				return fmt.Errorf(templateExecErr, err)
+			}
+		default:
+			return fmt.Errorf("Result media type does not match known types: Type is %s", result.MediaType)
+		}
+	}
+	return nil
+}
+
+/*
+	PerformSearch: Performs multimedia search via TMDB API using the input query, nsfw, language, and page parameters. Results are templatized and logged to console.
+	Returns error if one occurred, nil otherwise
+*/
 func PerformSearch(query string, nsfw bool, language string, page int32) error {
 	tmdbClient, err := client.PrepareClient()
 	if err != nil {
@@ -23,17 +72,9 @@ func PerformSearch(query string, nsfw bool, language string, page int32) error {
 	if err != nil {
 		return fmt.Errorf("error calling client in handler: %s/n", err)
 	}
-	headerFmt := color.New(color.FgGreen, color.Underline).SprintfFunc()
-	columnFmt := color.New(color.FgYellow).SprintfFunc()
-
-	tbl := table.New("ID", "Name/Title", "Original Name/Title", "Release Date", "Original Language", "Country of Origin", "")
-	tbl.WithHeaderFormatter(headerFmt).WithFirstColumnFormatter(columnFmt)
-	for _, result := range results {
-		title := strings.TrimSpace(fmt.Sprintf("%s %s", result.Title, result.Name))
-		origTitle := strings.TrimSpace(fmt.Sprintf("%s %s", result.OriginalName, result.OriginalTitle))
-
-		tbl.AddRow(result.ID, title, origTitle, result.ReleaseDate, result.OriginalLanguage, result.OriginCountry)
+	err = parseTMDBResults(results)
+	if err != nil {
+		return fmt.Errorf("error calling client in handler: %s/n", err)
 	}
-	tbl.Print()
 	return nil
 }
