@@ -17,13 +17,30 @@ func TestMain(m *testing.M) {
 }
 
 func TestPerformSearch_Success(t *testing.T) {
-	//Place-holder text
+	// Default call arguments
+	err := PerformSearch("example_query", false, "en", int32(1))
+	if err != nil {
+		t.Error(err)
+	}
 }
 
 func TestPerformSearch_ParseFailure(t *testing.T) {
-	//Place-holder text
+	client.MockMultimediaSearchResponse[0].MediaType = "non-existent-type"
+	expErr := "error #0: result media type does not match known types: type is non-existent-type\n"
+	// Default call arguments
+	err := PerformSearch("example_query", false, "en", int32(1))
+	if err.Error() != expErr {
+		t.Errorf("Unexpected error thrown: Got '%s', but expected '%s'\n", err.Error(), expErr)
+	}
 }
 
 func TestPerformSearch_SearchFailure(t *testing.T) {
-	//Place-holder text
+	tmdbClient = &client.MockTMDBClient{MultimediaSearchErr: true}
+	expErr := "error calling TMDB client: mock error during MultimediaSearch()\n"
+	// Default call arguments
+	err := PerformSearch("example_query", false, "en", int32(1))
+	if err.Error() != expErr {
+		t.Errorf("Unexpected error thrown: Got '%s', but expected '%s'\n", err.Error(), expErr)
+	}
+	tmdbClient = &client.MockTMDBClient{}
 }

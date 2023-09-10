@@ -26,7 +26,7 @@ const (
 	{{.Name}}
 	Media type: {{.MediaType}}
 	ID: {{.ID}}
-	Known For: {{.Known For}}
+	Known For: {{if .KnownFor}}{{.KnownFor}}{{else}}None{{end}}
 	Genre IDs: {{if .GenreIDs}}{{.GenreIDs}}{{else}}None{{end}}
 	Description: {{if .Overview}}{{.Overview}}{{else}}None{{end}}
 	`

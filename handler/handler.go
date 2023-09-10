@@ -13,9 +13,13 @@ import (
 var (
 	templateParseErr = "error parsing TMDB client response to template: %s\n"
 	templateExecErr  = "error executing template: %s\n"
+	tmdbClientErr    = "error calling TMDB client: %s\n"
 	tmdbClient       constants.TMDBClient
 )
 
+/*
+	Init: Initializes TMDB client instance, logic as a separate function to allow mocking client
+*/
 func Init() {
 	t, err := client.PrepareClient()
 	if err != nil {
@@ -27,41 +31,50 @@ func Init() {
 /*
 	parseTMDBResults: Templatizes input results based on their media type and logs the results to console. Returns error if one occurs, nil otherwise
 */
-func parseTMDBResults(results []constants.TMDBResult) error {
+func parseTMDBResults(results []constants.TMDBResult) []error {
+	var errSlc []error
 	for _, result := range results {
 		switch result.MediaType {
 		case "person":
 			t, err := template.New(result.MediaType).Parse(constants.TMDBPersonTemplate)
 			if err != nil {
-				return fmt.Errorf(templateParseErr, err)
+				errSlc = append(errSlc, fmt.Errorf(templateParseErr, err))
+				continue
 			}
 			err = t.Execute(os.Stdout, result)
 			if err != nil {
-				return fmt.Errorf(templateExecErr, err)
+				errSlc = append(errSlc, fmt.Errorf(templateExecErr, err))
+				continue
 			}
 		case "movie":
 			t, err := template.New(result.MediaType).Parse(constants.TMDBMovieTemplate)
 			if err != nil {
-				return fmt.Errorf(templateParseErr, err)
+				errSlc = append(errSlc, fmt.Errorf(templateParseErr, err))
+				continue
 			}
 			err = t.Execute(os.Stdout, result)
 			if err != nil {
-				return fmt.Errorf(templateExecErr, err)
+				errSlc = append(errSlc, fmt.Errorf(templateExecErr, err))
+				continue
 			}
 		case "tv":
 			t, err := template.New(result.MediaType).Parse(constants.TMDBShowTemplate)
 			if err != nil {
-				return fmt.Errorf(templateParseErr, err)
+				errSlc = append(errSlc, fmt.Errorf(templateParseErr, err))
+				continue
 			}
 			err = t.Execute(os.Stdout, result)
 			if err != nil {
-				return fmt.Errorf(templateExecErr, err)
+				errSlc = append(errSlc, fmt.Errorf(templateExecErr, err))
+				continue
 			}
 		default:
-			log.Printf("Result media type does not match known types: type is %s\n", result.MediaType)
+			err := fmt.Errorf("result media type does not match known types: type is %s", result.MediaType)
+			errSlc = append(errSlc, err)
+			continue
 		}
 	}
-	return nil
+	return errSlc
 }
 
 /*
@@ -76,11 +89,20 @@ func PerformSearch(query string, nsfw bool, language string, page int32) error {
 	}
 	results, err := tmdbClient.MultimediaSearch(query, urlOpts)
 	if err != nil {
-		return fmt.Errorf("error calling client in handler: %s/n", err)
+		return fmt.Errorf(tmdbClientErr, err)
 	}
-	err = parseTMDBResults(results)
-	if err != nil {
-		return fmt.Errorf("error calling client in handler: %s/n", err)
+	errs := parseTMDBResults(results)
+	var errStr string
+	if len(errs) > 0 {
+		log.Println("Errors occurred while parsing TMDB Results:")
+		for i, err := range errs {
+			log.Println(err)
+			errStr += fmt.Sprintf("error #%d: %s\n", i, err.Error())
+		}
+	}
+	err = fmt.Errorf(errStr)
+	if len(err.Error()) > 0 {
+		return err
 	}
 	return nil
 }
