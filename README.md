@@ -1,4 +1,6 @@
-# media-lookup
+# Media lookup
+## Overview
+A Go-Cobra CLI tool for searching and getting metadata on movies, TV shows, and famous persons
 
 ## Required Environment Variables
 * TMDB API Key
@@ -17,12 +19,21 @@
 ### Search for Movie, TV Show, or Person
 `./media-lookup search --query "SpongeBob" --nsfw false --page 1 --language "en"`
 
-Required flags: 
-    - query
-Optional flags: 
-    - nsfw
-        - Defaults to false
-    - language 
-        - Defaults to 'en'
-    - page
-        - Defaults to 1
+## Search Flags
+Required flags:
+* query string
+Optional flags:
+- nsfw bool
+    - Defaults to false
+- language string
+    - Defaults to 'en'
+- page int
+    - Defaults to 1
+
+### Get Movie, TV Show, or Person Metadata
+`./media-lookup details --id "12345" --media-type "[person|tv|movie]"`
+
+## Search Flags
+Required flags:
+* id string
+* media-type string

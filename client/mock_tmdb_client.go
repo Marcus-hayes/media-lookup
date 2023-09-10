@@ -38,3 +38,7 @@ func (m *MockTMDBClient) MultimediaSearch(query string, urlOpts map[string]strin
 	}
 	return MockMultimediaSearchResponse, nil
 }
+
+func (m *MockTMDBClient) GetDetails(idStr string, mediaType string) (*constants.TMDBDetailResult, error) {
+	return nil, nil
+}

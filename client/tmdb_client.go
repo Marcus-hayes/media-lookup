@@ -5,13 +5,17 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/Marcus-hayes/media-lookup/constants"
 	tmdb "github.com/cyruzin/golang-tmdb"
 )
 
-var MissingEnvironmentVarError = "Missing environment variable error: Please set the following environment variables and re-build: "
+var (
+	MissingEnvironmentVarError = "Missing environment variable error: Please set the following environment variables and re-build: "
+	MediaNotFoundErr           = "Media for ID #%s was not found. Please try another ID"
+)
 
 type tmdbClient struct {
 	client *tmdb.Client
@@ -86,4 +90,45 @@ func (t *tmdbClient) MultimediaSearch(query string, urlOpts map[string]string) (
 		}
 	}
 	return resultSlc, err
+}
+
+/*
+	GetDetails: Performs multi-media search via TMDB API. Takes query string and url parameter map, perform query, de-paginates results and
+	returns in a slice, along with any errors that may have occurred
+*/
+func (t *tmdbClient) GetDetails(idStr string, mediaType string) (*constants.TMDBDetailResult, error) {
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		return nil, err
+	}
+	urlOpts := map[string]string{
+		"language": "en-US",
+	}
+	var result constants.TMDBDetailResult
+	switch mediaType {
+	case "person":
+		resp, err := t.client.GetPersonDetails(id, urlOpts)
+		if err != nil {
+			return nil, err
+		}
+		result.PersonDetails = resp
+	case "tv":
+		resp, err := t.client.GetTVDetails(id, urlOpts)
+		if err != nil {
+			return nil, err
+		}
+		result.ShowDetails = resp
+	case "movie":
+		resp, err := t.client.GetMovieDetails(id, urlOpts)
+		if err != nil {
+			return nil, err
+		}
+		result.MovieDetails = resp
+	default:
+		return nil, fmt.Errorf(MediaNotFoundErr)
+	}
+	if err != nil {
+		return nil, err
+	}
+	return &result, err
 }

@@ -106,3 +106,45 @@ func PerformSearch(query string, nsfw bool, language string, page int32) error {
 	}
 	return nil
 }
+
+/*
+	GetTMDBDetails: Performs multimedia search via TMDB API using the input id and page parameters. Results are templatized and logged to console.
+	Returns error if one occurred, nil otherwise
+*/
+func GetTMDBDetails(id string, mediaType string) error {
+	result, err := tmdbClient.GetDetails(id, mediaType)
+	if err != nil {
+		return fmt.Errorf(tmdbClientErr, err)
+	}
+	if result.MovieDetails != nil {
+		t, err := template.New(mediaType).Parse(constants.TMDBMovieDetailTemplate)
+		if err != nil {
+			return err
+		}
+		err = t.Execute(os.Stdout, *result.MovieDetails)
+		if err != nil {
+			return err
+		}
+	} else if result.PersonDetails != nil {
+		t, err := template.New(mediaType).Parse(constants.TMDBPersonDetailTemplate)
+		if err != nil {
+			return err
+		}
+		err = t.Execute(os.Stdout, *result.PersonDetails)
+		if err != nil {
+			return err
+		}
+	} else if result.ShowDetails != nil {
+		t, err := template.New(mediaType).Parse(constants.TMDBShowDetailTemplate)
+		if err != nil {
+			return err
+		}
+		err = t.Execute(os.Stdout, *result.ShowDetails)
+		if err != nil {
+			return err
+		}
+	} else {
+		return fmt.Errorf("no metadata returned for that ID")
+	}
+	return nil
+}

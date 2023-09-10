@@ -1,39 +1,10 @@
 package constants
 
-const (
-	TMDBShowTemplate = `
-	----------------------------------------
-	{{.Title}}
-	Media type: {{.MediaType}}
-	ID: {{.ID}}
-	Release Date: {{.ReleaseDate}}
-	Original Language: {{.OriginalLanguage}}
-	Genre IDs: {{if .GenreIDs}}{{.GenreIDs}}{{else}}None{{end}}
-	Description: {{if .Overview}}{{.Overview}}{{else}}None{{end}}
-	`
-	TMDBMovieTemplate = `
-	----------------------------------------
-	{{.Title}}
-	Media type: {{.MediaType}}
-	ID: {{.ID}}
-	Release Date: {{.ReleaseDate}}
-	Original Language: {{.OriginalLanguage}}
-	Genre IDs: {{if .GenreIDs}}{{.GenreIDs}}{{else}}None{{end}}
-	Description: {{if .Overview}}{{.Overview}}{{else}}None{{end}}
-	`
-	TMDBPersonTemplate = `
-	----------------------------------------
-	{{.Name}}
-	Media type: {{.MediaType}}
-	ID: {{.ID}}
-	Known For: {{if .KnownFor}}{{.KnownFor}}{{else}}None{{end}}
-	Genre IDs: {{if .GenreIDs}}{{.GenreIDs}}{{else}}None{{end}}
-	Description: {{if .Overview}}{{.Overview}}{{else}}None{{end}}
-	`
-)
+import tmdb "github.com/cyruzin/golang-tmdb"
 
 type TMDBClient interface {
 	MultimediaSearch(query string, urlOpts map[string]string) ([]TMDBResult, error)
+	GetDetails(idStr string, mediaType string) (*TMDBDetailResult, error)
 }
 
 type TMDBResult struct {
@@ -74,4 +45,10 @@ type TMDBResult struct {
 		Video            bool    `json:"video"`
 		VoteAverage      float32 `json:"vote_average"`
 	} `json:"known_for,omitempty"`
+}
+
+type TMDBDetailResult struct {
+	PersonDetails *tmdb.PersonDetails
+	MovieDetails  *tmdb.MovieDetails
+	ShowDetails   *tmdb.TVDetails
 }
