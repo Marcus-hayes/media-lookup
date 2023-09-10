@@ -21,13 +21,18 @@ A Go-Cobra CLI tool for searching and getting metadata on movies, TV shows, and 
 
 ## Search Flags
 Required flags:
-* query string
+* query
+    - string
+
 Optional flags:
-- nsfw bool
+- nsfw
+    - bool
     - Defaults to false
-- language string
+- language
+    - string
     - Defaults to 'en'
-- page int
+- page
+    - int
     - Defaults to 1
 
 ### Get Movie, TV Show, or Person Metadata
@@ -35,5 +40,7 @@ Optional flags:
 
 ## Search Flags
 Required flags:
-* id string
-* media-type string
+* id
+    - string
+* media-type
+    - string
