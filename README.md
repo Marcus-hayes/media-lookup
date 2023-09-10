@@ -20,27 +20,20 @@ A Go-Cobra CLI tool for searching and getting metadata on movies, TV shows, and 
 `./media-lookup search --query "SpongeBob" --nsfw false --page 1 --language "en"`
 
 #### Command Flags
-Required flags:
-* query
-    - string
-
-Optional flags:
-- nsfw
-    - bool
-    - Defaults to false
-- language
-    - string
-    - Defaults to 'en'
-- page
-    - int
-    - Defaults to 1
+Flags:
+| Flag Name | Type      | Description                |
+| :-------- | :-------- | :-------------------------    |
+| `query`   | `string`  | **Required** Query string |
+| `nsfw`    | `bool`    | Optional NSFW filter; default is false |
+| `language` | `string` | Optional language filter; default is 'en' |
+| `page`    | `int32`   | Optional page filter; default is 1 |
 
 ### Get Movie, TV Show, or Person Metadata
 `./media-lookup details --id "12345" --media-type "[person|tv|movie]"`
 
 #### Command Flags
-Required flags:
-* id
-    - string
-* media-type
-    - string
+Flags:
+| Flag Name | Type      | Description                |
+| :-------- | :-------- | :-------------------------    |
+| `id`   | `string`  | **Required** ID string of TMDB object |
+| `media-type`    | `string`    | **Required** Media type of TMDB Object {"person", "tv", "movie"} |
