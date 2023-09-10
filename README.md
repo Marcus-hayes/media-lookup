@@ -19,7 +19,7 @@ A Go-Cobra CLI tool for searching and getting metadata on movies, TV shows, and 
 ### Search for Movie, TV Show, or Person
 `./media-lookup search --query "SpongeBob" --nsfw false --page 1 --language "en"`
 
-## Search Flags
+#### Command Flags
 Required flags:
 * query
     - string
@@ -38,7 +38,7 @@ Optional flags:
 ### Get Movie, TV Show, or Person Metadata
 `./media-lookup details --id "12345" --media-type "[person|tv|movie]"`
 
-## Search Flags
+#### Command Flags
 Required flags:
 * id
     - string
