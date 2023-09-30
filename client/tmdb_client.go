@@ -125,10 +125,7 @@ func (t *tmdbClient) GetDetails(idStr string, mediaType string) (*constants.TMDB
 		}
 		result.MovieDetails = resp
 	default:
-		return nil, fmt.Errorf(MediaNotFoundErr)
-	}
-	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(MediaNotFoundErr, idStr)
 	}
 	return &result, err
 }
