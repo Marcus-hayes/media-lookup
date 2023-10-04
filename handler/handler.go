@@ -1,8 +1,11 @@
 package handler
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"os"
 	"text/template"
 
@@ -18,10 +21,10 @@ var (
 )
 
 /*
-	Init: Initializes TMDB client instance, logic as a separate function to allow mocking client
+	InitTMDB: Initializes TMDB client instance, logic as a separate function to allow mocking client
 */
-func Init() {
-	t, err := client.PrepareClient()
+func InitTMDB() {
+	t, err := client.PrepareTMDBClient()
 	if err != nil {
 		log.Fatalln("Error initializing handler: ", err)
 	}
@@ -145,6 +148,89 @@ func GetTMDBDetails(id string, mediaType string) error {
 		}
 	} else {
 		return fmt.Errorf("no metadata returned for that ID")
+	}
+	return nil
+}
+
+func GuessAgeByName(name string) error {
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", "https://api.agify.io", nil)
+	if err != nil {
+		return err
+	}
+	q := req.URL.Query()
+	q.Add("name", name)
+	req.URL.RawQuery = q.Encode()
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	respBytes, _ := io.ReadAll(resp.Body)
+	var resultTemplate constants.GuessAgeResult
+	err = json.Unmarshal(respBytes, &resultTemplate)
+	if err != nil {
+		return err
+	}
+	resultTemplate.Age -= 27
+	t, err := template.New("guess-age-template").Parse(constants.GuessAgeByNameTemplate)
+	if err != nil {
+		return err
+	}
+	err = t.Execute(os.Stdout, resultTemplate)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func LotrGetBooks() error {
+	lotrClient := &client.LOTRClient{}
+	resp, err := lotrClient.GetBooks()
+	if err != nil {
+		return err
+	}
+	t, err := template.New("lotr-book-list-template").Parse(constants.LOTRBookTemplate)
+	if err != nil {
+		return err
+	}
+	err = t.Execute(os.Stdout, resp)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func LotrGetBookById(id string) error {
+	lotrClient := &client.LOTRClient{}
+	resp, err := lotrClient.GetBookById(id)
+	if err != nil {
+		return err
+	}
+	t, err := template.New("lotr-book-detail-template").Parse(constants.LOTRBookTemplate)
+	if err != nil {
+		return err
+	}
+	err = t.Execute(os.Stdout, resp)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func LotrGetBookChaptersById(id string) error {
+	lotrClient := &client.LOTRClient{}
+	resp, err := lotrClient.GetBookChaptersById(id)
+	if err != nil {
+		return err
+	}
+	t, err := template.New("lotr-book-detail-template").Parse(constants.LOTRBookTemplate)
+	if err != nil {
+		return err
+	}
+	err = t.Execute(os.Stdout, resp)
+	if err != nil {
+		return err
 	}
 	return nil
 }

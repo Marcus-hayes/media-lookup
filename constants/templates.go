@@ -111,4 +111,19 @@ Birthday: {{if .Birthday}}{{.Birthday}}{{- else}}Not Available{{end}}
 Date of Death: {{if .Deathday}}{{.Deathday}}{{- else}}Not Available{{end}}
 Bio: {{if .Biography}}{{.Biography}}{{- else}}Not Available{{end}}
 `
+	GuessAgeByNameTemplate = `
+----------------------------------------
+Based on your name, your guessed age is {{.Age}}!
+`
+	LOTRBookTemplate = `
+----------------------------------------
+Results: 
+Total Items: {{.Total}}
+{{range .Docs}}
+	---------------
+	{{if .Name}}Name: {{.Name}}{{- else if .ChapterName}}Chapter Name: {{.ChapterName}}{{- else}}Not Available{{end}}
+	ID: {{.ID}}
+	{{- else}}Not Available{{end}}
+----------------------------------------
+`
 )

@@ -1,10 +1,16 @@
 package constants
 
-import tmdb "github.com/cyruzin/golang-tmdb"
+import (
+	tmdb "github.com/cyruzin/golang-tmdb"
+)
 
 type TMDBClient interface {
 	MultimediaSearch(query string, urlOpts map[string]string) ([]TMDBResult, error)
 	GetDetails(idStr string, mediaType string) (*TMDBDetailResult, error)
+}
+
+type LOTRClient interface {
+	GetBooks() error
 }
 
 type TMDBResult struct {
@@ -51,4 +57,25 @@ type TMDBDetailResult struct {
 	PersonDetails *tmdb.PersonDetails
 	MovieDetails  *tmdb.MovieDetails
 	ShowDetails   *tmdb.TVDetails
+}
+
+type GuessAgeResult struct {
+	Count int32  `json:"count"`
+	Name  string `json:"name"`
+	Age   int32  `json:"age"`
+}
+
+type LOTRBookResponse struct {
+	Docs   []LOTRBookItem `json:"docs"`
+	Total  int32          `json:"total"`
+	Limit  int32          `json:"limit"`
+	Offset int32          `json:"offset"`
+	Page   int32          `json:"page"`
+	Pages  int32          `json:"pages"`
+}
+
+type LOTRBookItem struct {
+	ID          string `json:"_id"`
+	Name        string `json:"name,omitempty"`
+	ChapterName string `json:"chapterName,omitempty"`
 }

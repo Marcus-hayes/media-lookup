@@ -3,7 +3,7 @@
 A Go-Cobra CLI tool for searching and getting metadata on movies, TV shows, and famous persons
 
 ## Required Environment Variables
-* TMDB API Key
+* TMDB_API_Key
     - Can be obtained at following link:
         https://developer.themoviedb.org/reference/intro/authentication#api-key-quick-start
     - To set environment variables, I recommend this link for instruction:

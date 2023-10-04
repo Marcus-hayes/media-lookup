@@ -26,11 +26,11 @@ type tmdbClient struct {
 	for TMDB queries
 	https://developer.themoviedb.org/docs
 */
-func PrepareClient() (*tmdbClient, error) {
+func PrepareTMDBClient() (*tmdbClient, error) {
 	// Look-up TMDB API Key in environment
 	apiKey, ok := os.LookupEnv("TMDB_API_KEY")
 	if !ok {
-		return nil, fmt.Errorf(MissingEnvironmentVarError)
+		return nil, fmt.Errorf(MissingEnvironmentVarError, "TMDB_API_KEY")
 	}
 	log.Println("API key found, initializing client...")
 	baseClient, err := tmdb.Init(apiKey)
