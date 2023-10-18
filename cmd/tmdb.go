@@ -13,6 +13,8 @@ func init() {
 	searchCmd.Flags().Bool("nsfw", false, "")
 	searchCmd.Flags().String("language", "en-US", "")
 	searchCmd.Flags().Int32("page", 1, "")
+
+	rootCmd.AddCommand(tmdbDetailCmd)
 	// Detail CMD Flags
 	tmdbDetailCmd.Flags().String("id", "", "")
 	tmdbDetailCmd.MarkFlagRequired("id")

@@ -8,8 +8,11 @@ import (
 func init() {
 	rootCmd.AddCommand(lotrCmd)
 	lotrCmd.AddCommand(lotrBookSubCmd)
+	lotrCmd.AddCommand(lotrMovieSubCmd)
+
 	// Book - List Sub CMD
 	lotrBookSubCmd.AddCommand(lotrBookListSubCmd)
+
 	// Book - Detail Sub CMD
 	lotrBookSubCmd.AddCommand(lotrBookDetailSubCmd)
 	lotrBookDetailSubCmd.Flags().String("id", "", "id string, used to search for LoTR book")
@@ -19,6 +22,19 @@ func init() {
 	lotrBookSubCmd.AddCommand(lotrBookChaptersSubCmd)
 	lotrBookChaptersSubCmd.Flags().String("id", "", "id string, used to search for LoTR book")
 	lotrBookChaptersSubCmd.MarkFlagRequired("id")
+
+	// Movie - List Sub CMD
+	lotrMovieSubCmd.AddCommand(lotrMovieListSubCmd)
+
+	// Movie - Quotes Sub CMD
+	lotrMovieSubCmd.AddCommand(lotrMovieQuotesSubCmd)
+	lotrMovieQuotesSubCmd.Flags().String("id", "", "id string, used to search for LoTR book")
+	lotrMovieQuotesSubCmd.MarkFlagRequired("id")
+
+	// Movie - Detail Sub CMD
+	lotrMovieSubCmd.AddCommand(lotrMovieDetailSubCmd)
+	lotrMovieDetailSubCmd.Flags().String("id", "", "id string, used to search for LoTR book")
+	lotrMovieDetailSubCmd.MarkFlagRequired("id")
 }
 
 var lotrCmd = &cobra.Command{
@@ -79,6 +95,62 @@ var lotrBookChaptersSubCmd = &cobra.Command{
 			return err
 		}
 		err = handler.LotrGetBookChaptersById(id)
+		if err != nil {
+			return err
+		}
+		return nil
+	},
+}
+
+var lotrMovieSubCmd = &cobra.Command{
+	Use:   "movies",
+	Short: "Access LoTR movie resources",
+	Long:  "Get LoTR data via the The One API, defined here: https://the-one-api.dev/documentation",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return nil
+	},
+}
+
+var lotrMovieListSubCmd = &cobra.Command{
+	Use:   "list",
+	Short: "List LoTR movies",
+	Long:  "Get LoTR data via the The One API, defined here: https://the-one-api.dev/documentation",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		err := handler.LotrGetMovies()
+		if err != nil {
+			return err
+		}
+		return nil
+	},
+}
+
+var lotrMovieDetailSubCmd = &cobra.Command{
+	Use:   "detail",
+	Short: "Get details of a LoTR movie by searching its ID",
+	Long:  "Get LoTR data via the The One API, defined here: https://the-one-api.dev/documentation",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		id, err := cmd.Flags().GetString("id")
+		if err != nil {
+			return err
+		}
+		err = handler.LotrGetMovieById(id)
+		if err != nil {
+			return err
+		}
+		return nil
+	},
+}
+
+var lotrMovieQuotesSubCmd = &cobra.Command{
+	Use:   "quotes",
+	Short: "Get quotes of a LoTR movie by searching its ID",
+	Long:  "Get LoTR data via the The One API, defined here: https://the-one-api.dev/documentation",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		id, err := cmd.Flags().GetString("id")
+		if err != nil {
+			return err
+		}
+		err = handler.LotrGetMovieQuotesById(id)
 		if err != nil {
 			return err
 		}

@@ -172,7 +172,6 @@ func GuessAgeByName(name string) error {
 	if err != nil {
 		return err
 	}
-	resultTemplate.Age -= 27
 	t, err := template.New("guess-age-template").Parse(constants.GuessAgeByNameTemplate)
 	if err != nil {
 		return err
@@ -225,6 +224,57 @@ func LotrGetBookChaptersById(id string) error {
 		return err
 	}
 	t, err := template.New("lotr-book-detail-template").Parse(constants.LOTRBookTemplate)
+	if err != nil {
+		return err
+	}
+	err = t.Execute(os.Stdout, resp)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func LotrGetMovies() error {
+	lotrClient := &client.LOTRClient{}
+	resp, err := lotrClient.GetMovies()
+	if err != nil {
+		return err
+	}
+	t, err := template.New("lotr-movie-list-template").Parse(constants.LOTRMovieTemplate)
+	if err != nil {
+		return err
+	}
+	err = t.Execute(os.Stdout, resp)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func LotrGetMovieById(id string) error {
+	lotrClient := &client.LOTRClient{}
+	resp, err := lotrClient.GetMovieById(id)
+	if err != nil {
+		return err
+	}
+	t, err := template.New("lotr-movie-detail-template").Parse(constants.LOTRMovieTemplate)
+	if err != nil {
+		return err
+	}
+	err = t.Execute(os.Stdout, resp)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func LotrGetMovieQuotesById(id string) error {
+	lotrClient := &client.LOTRClient{}
+	resp, err := lotrClient.GetMovieQuotesById(id)
+	if err != nil {
+		return err
+	}
+	t, err := template.New("lotr-movie-quote-template").Parse(constants.LOTRMovieQuoteTemplate)
 	if err != nil {
 		return err
 	}

@@ -79,3 +79,40 @@ type LOTRBookItem struct {
 	Name        string `json:"name,omitempty"`
 	ChapterName string `json:"chapterName,omitempty"`
 }
+
+type LOTRMovieResponse struct {
+	Docs   []LOTRMovieItem `json:"docs"`
+	Total  int32           `json:"total"`
+	Limit  int32           `json:"limit"`
+	Offset int32           `json:"offset"`
+	Page   int32           `json:"page"`
+	Pages  int32           `json:"pages"`
+}
+
+type LOTRMovieItem struct {
+	ID                      string  `json:"_id"`
+	Name                    string  `json:"name"`
+	RottenTomatoesScore     float32 `json:"rottenTomatoesScore"`
+	AcademyAwardNominations int     `json:"academyAwardNominations"`
+	AcademyAwardWins        int     `json:"academyAwardWins"`
+	Runtime                 int     `json:"runtimeInMinutes"`
+	BoxOfficeRevenue        float32 `json:"boxOfficeRevenueInMillions"`
+	Budget                  float32 `json:"BudgetInMillions"`
+}
+
+type LOTRMovieQuoteResponse struct {
+	Docs   []LOTRMovieQuoteItem `json:"docs"`
+	Total  int32                `json:"total"`
+	Limit  int32                `json:"limit"`
+	Offset int32                `json:"offset"`
+	Page   int32                `json:"page"`
+	Pages  int32                `json:"pages"`
+}
+
+type LOTRMovieQuoteItem struct {
+	ID          string `json:"_id"`
+	QuoteId     string `json:"id"`
+	CharacterId string `json:"character"`
+	Dialog      string `json:"dialog"`
+	MovieId     string `json:"movie"`
+}

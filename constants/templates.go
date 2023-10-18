@@ -26,7 +26,13 @@ Description: {{if .Overview}}{{.Overview}}{{- else}}Not Available{{end}}
 {{.Name}}
 Media type: {{.MediaType}}
 ID: {{.ID}}
-Known For: {{if .KnownFor}}{{.KnownFor}}{{- else}}Not Available{{end}}
+Known For: {{range .KnownFor}}
+		Title: {{.Title}}
+		Overview: {{.Overview}}
+		ID: {{.ID}}
+		Media Type: {{.MediaType}}
+		----------------------------------------
+		{{- else}}Not Available{{end}}
 Genre IDs: {{if .GenreIDs}}{{.GenreIDs}}{{- else}}Not Available{{end}}
 Description: {{if .Overview}}{{.Overview}}{{- else}}Not Available{{end}}
 `
@@ -123,6 +129,37 @@ Total Items: {{.Total}}
 	---------------
 	{{if .Name}}Name: {{.Name}}{{- else if .ChapterName}}Chapter Name: {{.ChapterName}}{{- else}}Not Available{{end}}
 	ID: {{.ID}}
+	{{- else}}Not Available{{end}}
+----------------------------------------
+`
+	LOTRMovieTemplate = `
+----------------------------------------
+Results: 
+Total Items: {{.Total}}
+{{range .Docs}}
+	---------------
+	Name: {{.Name}}
+	ID: {{.ID}}
+	Runtime: {{.Runtime}} minutes
+	Academy Award Wins: {{.AcademyAwardWins}}
+	Academy Award Nominations: {{.AcademyAwardNominations}}
+	Budget: ${{.Budget}}m
+	Box Office Revenue: ${{.BoxOfficeRevenue}}m
+	Rotten Tomatoes Score: {{.RottenTomatoesScore}}%
+	{{- else}}Not Available{{end}}
+----------------------------------------
+`
+	LOTRMovieQuoteTemplate = `
+----------------------------------------
+Results: 
+Total Items: {{.Total}}
+{{range .Docs}}
+	---------------
+	ID: {{.ID}}
+	Movie ID: {{.MovieId}}
+	Character ID: {{.CharacterId}}
+	Dialog:
+		"{{.Dialog}}"
 	{{- else}}Not Available{{end}}
 ----------------------------------------
 `

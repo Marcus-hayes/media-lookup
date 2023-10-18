@@ -66,8 +66,7 @@ func (l *LOTRClient) GetBooks() (*constants.LOTRBookResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	result := &responseObj
-	return result, nil
+	return &responseObj, nil
 }
 
 func (l *LOTRClient) GetBookById(id string) (*constants.LOTRBookResponse, error) {
@@ -81,8 +80,7 @@ func (l *LOTRClient) GetBookById(id string) (*constants.LOTRBookResponse, error)
 	if err != nil {
 		return nil, err
 	}
-	result := &responseObj
-	return result, nil
+	return &responseObj, nil
 }
 
 func (l *LOTRClient) GetBookChaptersById(id string) (*constants.LOTRBookResponse, error) {
@@ -96,6 +94,47 @@ func (l *LOTRClient) GetBookChaptersById(id string) (*constants.LOTRBookResponse
 	if err != nil {
 		return nil, err
 	}
-	result := &responseObj
-	return result, nil
+	return &responseObj, nil
+}
+
+func (l *LOTRClient) GetMovies() (*constants.LOTRMovieResponse, error) {
+	url := fmt.Sprintf("%s/movie", lotrUrl)
+	respBytes, err := performHTTPRequest(url, nil, http.MethodGet, nil)
+	if err != nil {
+		return nil, err
+	}
+	var responseObj constants.LOTRMovieResponse
+	err = json.Unmarshal(respBytes, &responseObj)
+	if err != nil {
+		return nil, err
+	}
+	return &responseObj, nil
+}
+
+func (l *LOTRClient) GetMovieById(id string) (*constants.LOTRMovieResponse, error) {
+	url := fmt.Sprintf("%s/movie/%s", lotrUrl, id)
+	respBytes, err := performHTTPRequest(url, nil, http.MethodGet, nil)
+	if err != nil {
+		return nil, err
+	}
+	var responseObj constants.LOTRMovieResponse
+	err = json.Unmarshal(respBytes, &responseObj)
+	if err != nil {
+		return nil, err
+	}
+	return &responseObj, nil
+}
+
+func (l *LOTRClient) GetMovieQuotesById(id string) (*constants.LOTRMovieQuoteResponse, error) {
+	url := fmt.Sprintf("%s/movie/%s/quote", lotrUrl, id)
+	respBytes, err := performHTTPRequest(url, nil, http.MethodGet, nil)
+	if err != nil {
+		return nil, err
+	}
+	var responseObj constants.LOTRMovieQuoteResponse
+	err = json.Unmarshal(respBytes, &responseObj)
+	if err != nil {
+		return nil, err
+	}
+	return &responseObj, nil
 }
